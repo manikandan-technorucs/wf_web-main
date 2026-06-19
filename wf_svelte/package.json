@@ -3,10 +3,10 @@
 	"version": "0.0.3",
 	"private": true,
 	"scripts": {
-		"dev": "WF_PACKAGE=$npm_config_template vite dev",
-		"build": "WF_PACKAGE=$npm_config_template vite build --base=#BASE#",
-		"build-wordpress": "WF_PACKAGE=wordpress vite build --base=#BASE#",
-		"build-full": "WF_PACKAGE=full vite build --base=#BASE#",
+		"dev": "cross-env WF_PACKAGE=$npm_config_template vite dev",
+		"build": "cross-env WF_PACKAGE=$npm_config_template vite build --base=#BASE#",
+		"build-wordpress": "cross-env WF_PACKAGE=wordpress vite build --base=#BASE#",
+		"build-full": "cross-env WF_PACKAGE=full vite build --base=#BASE#",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch"

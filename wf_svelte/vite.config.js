@@ -8,7 +8,6 @@ const EMBED_JS = `<script type="text/javascript" src="./js/dist/2d/latest/Wayfin
 				  <script type="text/javascript" src="./js/dist/mobile/latest/WayfinderMobile.debug.js"></script>`;
 const __env = loadEnv("", process.cwd())
 const ignoreOpt = ["map", "mapSize"];
-console.log('__env', __env, process.cwd())
 function parseOptions(env, prefix) {
 	let entries = Object.entries(env).filter((key) => {
 		return key && key[0] && key[0].toLowerCase().indexOf(prefix) == 0 && ignoreOpt.indexOf(key[0].toLowerCase().substring(prefix.length + 1)) == -1;
@@ -46,7 +45,6 @@ export default defineConfig({
 				order: 'pre', // Tells Vite to run this before other processes
 				async handler() {
 					// Do some logic; whatever you want
-					console.log('Running pre-build HTML transformation', process.env);
 					if (process.env.WF_PACKAGE) {
 						let html = await fs.readFile('./html/' + process.env.WF_PACKAGE + '.html', 'utf8');
 						return html;

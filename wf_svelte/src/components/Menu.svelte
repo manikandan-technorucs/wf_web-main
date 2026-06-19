@@ -33,7 +33,7 @@
 
     .wf-group-items {
         padding-left: 0;
-        color: #3c4d58;
+        color: #3C3C46;
     }
 
     /* Track */

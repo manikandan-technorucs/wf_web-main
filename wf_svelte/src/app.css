@@ -5,11 +5,11 @@
 #wf_app {
     min-height: 625px;
     box-sizing: border-box;
-    --wf-active-color: var(--theme-palette-color-1, #5867ef);
-    --wf-active-content: var(--theme-button-text-initial-color, #fff);
-    --wf-neutral-color: var(--theme-border-color, #5867ef);
-    --wf-secondary-color: var(--theme-button-text-initial-color, #fff);
-    --wf-secondary-content: var(--theme-palette-color-1, #5867ef);
+    --wf-active-color: var(--theme-palette-color-1, #3C3C46);
+    --wf-active-content: var(--theme-button-text-initial-color, #FFFFFF);
+    --wf-neutral-color: var(--theme-border-color, #3C3C46);
+    --wf-secondary-color: var(--theme-button-text-initial-color, #FFFFFF);
+    --wf-secondary-content: var(--theme-palette-color-1, #3C3C46);
 
     display: flex;
     overflow: hidden;
@@ -18,8 +18,8 @@
 
 .wf-appcontainer button {
     border: 1px solid #A7A9AC;
-    color: var(--wf-active-content, #fff);
-    background-color: var(--wf-active-color, #5867ef);
+    color: var(--wf-active-content, #FFFFFF);
+    background-color: var(--wf-active-color, #3C3C46);
 }
 
 .wf-accordion ul:last-of-type {
@@ -76,7 +76,7 @@
 
 .wf-group-items li.wf-active > label {
     font-weight: 700;
-    color: var(--wf-active-color, #5867ef);
+    color: var(--wf-active-color, #3C3C46);
 }
 
 #wf-menu-items > li {
@@ -114,9 +114,9 @@
     width: 1.5rem;
     height: 1.5rem;
     line-height: 1.5rem;
-    border: 1px solid #3c4d58;
+    border: 1px solid #3C3C46;
     text-align: center;
-    color: #3c4d58;
+    color: #3C3C46;
     display: none;
 }
 

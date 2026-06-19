@@ -1060,9 +1060,8 @@
 
     .poi-search-container #wf-search-icon {
         position: absolute;
-        top: 8px;
         right: 0.8rem;
-        color: #3c4d58;
+        color: #3C3C46;
         height: 24px;
         width: auto;
     }
@@ -1143,7 +1142,7 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow-x: hidden;
-        color: #3c4d58;
+        color: #3C3C46;
     }
 
     @keyframes bounce-left {

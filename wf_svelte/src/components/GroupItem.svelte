@@ -1,4 +1,7 @@
 <li class="wf-list-item {active ? 'wf-active' : ''}">
+    <!-- svelte-ignore a11y-label-has-associated-control -->
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
     <label class="wf-menu-label"  on:click={openGroup(group.id)}>{ group.name }</label>
     {#if active}
         <ul class="wf-group-items">
