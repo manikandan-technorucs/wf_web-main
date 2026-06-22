@@ -14,7 +14,18 @@ function parseOptions(env, prefix) {
 	});
 
 	entries = entries.map(v => {
-		return [v[0].toLowerCase().substring(prefix.length + 1), v[1]]
+		let keyName = v[0].toLowerCase().substring(prefix.length + 1);
+		if (prefix === "vite_wf_settings") {
+			// Convert underscores to dots
+			keyName = keyName.replace(/_/g, '.');
+			// Fix specific hyphenated cases that got converted to dots
+			keyName = keyName.replace('color.background', 'color-background');
+			keyName = keyName.replace('background.color', 'background-color');
+			keyName = keyName.replace('color.1.alt', 'color.1');
+			keyName = keyName.replace('color.1', 'color-1');
+            keyName = keyName.replace('color-1.alt', 'color.1'); // just in case
+		}
+		return [keyName, v[1]]
 	})
 	let _env = Object.fromEntries(entries);
 	return JSON.stringify(_env);
