@@ -11,6 +11,10 @@ body {
     font-family: 'Dubai', sans-serif;
 }
 
+/* ============================================================
+   CSS CUSTOM PROPERTIES — warm dark palette harmonised with
+   the map's gold accent (#BCA474) and charcoal (#3C3C46)
+   ============================================================ */
 #wf_app {
     min-height: 625px;
     box-sizing: border-box;
@@ -20,129 +24,508 @@ body {
     --wf-secondary-color: var(--theme-button-text-initial-color, #FFFFFF);
     --wf-secondary-content: var(--theme-palette-color-1, #3C3C46);
 
+    /* Sidebar clean light palette matching codebase & Marassi Galleria */
+    --sb-bg: #FFFFFF;
+    /* clean white navbar bg                    */
+    --sb-header-bg: #F8F9FA;
+    /* subtle off-white header                  */
+    --sb-border: #E0E0DF;
+    /* clean gray border from code              */
+    --sb-text: #231F20;
+    /* dark charcoal text from code             */
+    --sb-text-muted: #6E7178;
+    /* muted text                               */
+    --sb-hover: #F2F3F5;
+    /* soft gray hover tint                     */
+    --sb-search-bg: #F2F3F5;
+    /* clean search input bg                    */
+    --sb-active-bg: rgba(188, 164, 116, 0.12);
+    /* active group row        */
+    --sb-active-border: #BCA474;
+    /* gold left-accent        */
+    --sb-sub-active-bg: #3C3C46;
+    /* filled active POI       */
+    --sb-sub-active-txt: #FFFFFF;
+    /* white text on active    */
+
     font-family: 'Dubai', sans-serif;
     display: flex;
     overflow: hidden;
     width: 100%;
 }
 
-.wf-appcontainer button {
-    border: 1px solid #A7A9AC;
-    color: var(--wf-active-content, #FFFFFF);
-    background-color: var(--wf-active-color, #BCA474);
-    font-family: inherit;
-}
-
-.wf-accordion ul:last-of-type {
-    border-top: 1px solid white;
-    position: relative;
-    top: -1px;
-}
-
-.wf-accordion {
+/* ============================================================
+   SIDEBAR SHELL — Sleek Dark Charcoal Glassmorphism (Decision 1)
+   ============================================================ */
+.wf-menu {
+    background-color: rgba(208, 213, 220, 0.78);
+    background-image:
+        radial-gradient(circle at 15% 10%, rgba(255, 255, 255, 0.6) 0%, transparent 60%),
+        radial-gradient(circle at 85% 70%, rgba(188, 164, 116, 0.15) 0%, transparent 60%),
+        radial-gradient(circle at 50% 95%, rgba(0, 0, 0, 0.05) 0%, transparent 50%);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    border-right: 1px solid rgba(255, 255, 255, 0.85);
+    box-shadow:
+        2px 0 12px rgba(0, 0, 0, 0.04),
+        inset -1px 0 0 rgba(255, 255, 255, 0.6);
+    overflow: hidden;
     padding: 0;
+    margin-bottom: 0 !important;
+    position: relative;
+    z-index: 20;
+
+    /* ---- reduced width (320px) for a sleeker, more compact sidebar ---- */
+    flex-basis: 320px !important;
+    max-width: 320px !important;
+    min-width: 280px;
+    width: 320px !important;
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+/* Ensure map background and body cleanly match the Soft Cool-Gray canvas (#EAECEF) */
+html,
+body,
+#wf_app,
+.wf-map-container,
+.wf-map,
+.map-wrapper,
+#map {
+    background-color: #EAECEF !important;
+}
+
+.wf-menu.wf-hide {
+    display: none;
+}
+
+/* ---- Sidebar header (Silver-Grey Glassmorphism) ---- */
+.wf-sidebar-header {
+    background: rgba(225, 229, 235, 0.65);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 18px 16px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+}
+
+.wf-sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.wf-sidebar-brand-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #BCA474 0%, #9B8252 100%);
+    box-shadow: 0 4px 12px rgba(188, 164, 116, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1E1E24;
+    flex-shrink: 0;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.wf-sidebar-brand:hover .wf-sidebar-brand-icon {
+    transform: scale(1.08) rotate(-5deg);
+}
+
+.wf-sidebar-brand-icon svg {
+    width: 17px;
+    height: 17px;
+}
+
+.wf-sidebar-brand-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1E1E24;
+    letter-spacing: 0.4px;
+    text-shadow: none;
+}
+
+/* ---- Search bar (Silver Glass Pill) ---- */
+.poi-search-wrapper {
+    padding: 14px 14px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.25);
+    flex-shrink: 0;
+}
+
+.poi-search-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.poi-search-inner input {
+    width: 100%;
+    padding: 10px 34px 10px 36px;
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    font-size: 13px;
+    font-family: 'Dubai', sans-serif;
+    color: #1E1E24;
+    box-sizing: border-box;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    outline: none;
+}
+
+.poi-search-inner input:focus {
+    background: #FFFFFF;
+    border-color: #A0A6B2;
+    box-shadow: 0 4px 16px rgba(120, 125, 135, 0.15), 0 0 0 3px rgba(120, 125, 135, 0.10);
+    transform: translateY(-1px);
+    outline: none;
+}
+
+.poi-search-inner input::placeholder {
+    color: rgba(30, 30, 36, 0.45);
+    font-size: 12.5px;
+}
+
+.poi-search-icon-left {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(30, 30, 36, 0.5);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+}
+
+.poi-search-icon-left svg {
+    width: 14px;
+    height: 14px;
+}
+
+.poi-search-clear {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: rgba(30, 30, 36, 0.5);
+    display: flex;
+    align-items: center;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.poi-search-clear:hover {
+    color: #1E1E24;
+    transform: translateY(-50%) scale(1.15);
+}
+
+.poi-search-clear svg {
+    width: 13px;
+    height: 13px;
+}
+
+/* ---- "MAIN MENU" section label ---- */
+.wf-section-label,
+.wf-categories-header {
+    padding: 18px 16px 8px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(30, 30, 36, 0.55);
+    text-shadow: none;
+    user-select: none;
+}
+
+/* ============================================================
+   ACCORDION — Top-Level Group Items (Floating White/Silver Glass Cards)
+   ============================================================ */
+.wf-accordion {
+    padding: 0 4px 0 8px !important;
     overflow-x: hidden;
     overflow-y: auto;
-    margin-bottom: 0;
+    margin: 0;
     flex-shrink: 1;
     flex-grow: 0;
+    scrollbar-gutter: stable !important;
 }
 
 .wf-accordion ul {
     border-top: 0;
     font-size: 12px;
-    margin-top: 0.5rem;
+    margin-top: 0;
 }
 
-.wf-accordion li {
-    border: 1px solid #fff;
-    border-bottom: 1px solid #E0E0DF !important;
-    color: #343847;
-    border-bottom: 0;
-    list-style-type: none;
-    margin: 0;
-    user-select: none;
-    cursor: pointer;
-    padding: 4px 8px;
-    font-size: 18px;
-    font-weight: 400;
+/* Ensure no pseudo lines ever appear on the root menu list or top-level items */
+#wf-menu-items::before,
+#wf-menu-items>li::before {
+    display: none !important;
 }
 
-.wf-accordion li:last-child {
-    border: 1px solid #fff !important;
-}
-
-.wf-group-items,
-.wf-poi-list {
-    padding-left: 0;
-}
-
-.wf-group-items li {
-    transition: background-color 0.3s ease;
-}
-
-.wf-group-items li:hover {
-    padding-left: 24px;
-    transition: padding 0.3s ease;
-}
-
-.wf-group-items li.wf-active>label {
-    font-weight: 700;
-    color: var(--wf-active-color, #3C3C46);
-}
-
+/* Top-level group list items — floating white/silver glass cards */
 #wf-menu-items>li {
     font-weight: 600;
     position: relative;
-    border: 1px solid #fff;
-    border-bottom: 1px solid #E0E0DF;
-    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+    border-bottom: none !important;
+    padding: 0 !important;
+    margin: 6px 12px !important;
+    width: calc(100% - 24px) !important;
+    border-radius: 14px !important;
+    color: #1E1E24;
+    background: rgba(255, 255, 255, 0.55);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
 }
 
-#wf-menu-items>li>label:hover {
-    padding-left: 18px;
-    transition: padding 0.3s ease;
-    cursor: pointer;
+#wf-menu-items>li:hover {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: #B0B7C3 !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.03);
 }
 
-#wf-menu-items .wf-menu-label {
-    width: 100%;
-    display: block;
-    padding: 12px 8px;
+/* Active group — elevated card with light silver-gray accent */
+#wf-menu-items>li.wf-active {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #B0B7C3 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), inset 3px 0 0 #A0A6B2;
 }
 
 #wf-menu-items>li.wf-active>.wf-menu-label {
     font-weight: 700;
+    color: #1E1E24;
 }
 
-#wf-menu-items>li>.wf-menu-label>li:before {
-    content: "\f105";
-    font-family: 'FontAwesome';
-    position: absolute;
-    left: 0.5rem;
-    top: 9px;
-    background-color: #fff;
-    border-radius: 50%;
-    width: 1.5rem;
-    height: 1.5rem;
-    line-height: 1.5rem;
-    border: 1px solid #3C3C46;
-    text-align: center;
+#wf-menu-items .wf-menu-label {
+    font-size: 13.5px;
+    padding: 12px 14px;
+}
+
+/* ============================================================
+   SUB-GROUPS vs POIS — Clean Indented Hierarchy
+   ============================================================ */
+#wf-menu-items>li .wf-group-items {
+    padding: 4px 0 6px 0;
+    margin: 0;
+    position: relative;
+    background: transparent !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* 2nd-Level Sub-groups ("Mall entrances") — minimalist text row, NO box! */
+#wf-menu-items>li .wf-group-items>li {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 2px 12px !important;
+    padding: 0 !important;
+    list-style: none;
+    width: calc(100% - 24px) !important;
+    border-radius: 8px !important;
+    transform: none !important;
+}
+
+#wf-menu-items>li .wf-group-items>li>.wf-menu-label {
+    padding: 8px 12px 8px 20px !important;
     color: #3C3C46;
+    font-weight: 500;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+#wf-menu-items>li .wf-group-items>li>.wf-menu-label:hover {
+    color: #1E1E24;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
+}
+
+/* When 2nd-Level Sub-group is expanded, text turns dark charcoal/gray, NO background box! */
+#wf-menu-items>li .wf-group-items>li.wf-active>.wf-menu-label {
+    color: #1E1E24 !important;
+    font-weight: 700;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* 3rd-Level Final POIs & Search Results — Sleek Floating Pills */
+#wf-menu-items .wf-poi-list,
+#wf-search-items {
+    padding: 4px 0 8px 0;
+    margin: 0;
+    background: transparent !important;
+    border: none !important;
+}
+
+#wf-menu-items .wf-poi-list>li,
+#wf-search-items>li {
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+    border-radius: 10px !important;
+    color: #1E1E24;
+    margin: 6px 12px !important;
+    padding: 10px 14px !important;
+    font-size: 13px;
+    font-weight: 500;
+    list-style: none;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    position: relative;
+    user-select: none;
+    cursor: pointer;
+}
+
+#wf-menu-items .wf-poi-list>li:hover,
+#wf-search-items>li:hover {
+    background: rgba(255, 255, 255, 0.95);
+    color: #1E1E24;
+    border-color: #B0B7C3 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+/* Selected POI Pill — light luminous silver fill with dark charcoal typography! */
+#wf-menu-items .wf-poi-list>li.wf-active,
+#wf-search-items>li.wf-active {
+    background: linear-gradient(135deg, #E2E6ED 0%, #CCD3DE 100%) !important;
+    color: #1E1E24 !important;
+    font-weight: 700;
+    border: 1px solid #B0B7C3 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+#wf-menu-items .wf-poi-list>li.wf-active>label,
+#wf-search-items>li.wf-active>label {
+    font-weight: 700;
+    color: #1E1E24 !important;
+}
+
+/* ---- Scrollbar ---- */
+#wf-menu-content,
+.wf-accordion {
+    scrollbar-color: rgba(113, 117, 126, 0.35) transparent;
+    scrollbar-width: thin;
+    scrollbar-gutter: stable !important;
+    padding-right: 4px !important;
+    padding-left: 8px !important;
+}
+
+#wf-menu-content::-webkit-scrollbar,
+.wf-accordion::-webkit-scrollbar {
+    width: 6px;
+}
+
+#wf-menu-content::-webkit-scrollbar-track,
+.wf-accordion::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 8px 0;
+}
+
+#wf-menu-content::-webkit-scrollbar-thumb,
+.wf-accordion::-webkit-scrollbar-thumb {
+    background: rgba(113, 117, 126, 0.35);
+    border-radius: 10px;
+}
+
+#wf-menu-content::-webkit-scrollbar-thumb:hover,
+.wf-accordion::-webkit-scrollbar-thumb:hover {
+    background: #9AA2B0;
+}
+
+/* ============================================================
+   MAP CONTROLS (floor buttons etc.) — unchanged
+   ============================================================ */
+.wf-appcontainer button {
+    border: 1px solid #A7A9AC;
+    color: var(--wf-active-content, #FFFFFF);
+    background-color: var(--wf-active-color, #3C3C46);
+    font-family: inherit;
+}
+
+/* ---- Misc / overrides ---- */
+.wf-accordion ul:last-of-type {
+    border-top: 1px solid var(--sb-border);
+    position: relative;
+    top: -1px;
+}
+
+#wf-menu-items>li>.wf-menu-label>li:before,
+#wf-menu-items>li>.wf-menu-label>li.wf-active:before {
     display: none;
 }
 
-#wf-menu-items>li>.wf-menu-label>li.wf-active:before {
-    transform: rotate(90deg);
-    transition: transform 0.5s ease;
-    display: block;
+.wf-mobile-menu-header {
+    background: var(--sb-header-bg);
+    color: var(--sb-text);
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--sb-border);
 }
 
-#wf-menu-content {
-    scrollbar-color: var(--wf-neutral-color) #E0E0DF;
-    scrollbar-width: thin;
+/* ---- Fix Map Controls: Remove unwanted background box behind floor buttons & remove arrow icons ---- */
+.wf-map-buttons,
+#wf-floors,
+#wf-additional-buttons,
+.jspContainer,
+.jspPane {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
 }
 
-#wf-menu-content::-webkit-scrollbar {
-    width: 8px;
+/* ---- Leave generous, clean space between navbar and floor buttons ---- */
+.wf-map-buttons {
+    margin-left: 24px !important;
+    margin-right: 24px !important;
+}
+
+@media (max-width: 640px) {
+    .wf-map-buttons {
+        margin-left: 12px !important;
+        margin-right: 12px !important;
+    }
+}
+
+#wf-floors {
+    overflow: visible !important;
+    max-height: none !important;
+}
+
+/* Hide any injected arrow icons (◀ ● ▶), pagers, jscrollpane, or unwanted elements below or around floor buttons */
+#wf-floors>*:not(.wp-element-button),
+.wf-map-buttons>*:not(#wf-floors):not(#wf-additional-buttons),
+#wf-floors .floor-pager,
+#wf-floors .arrows,
+.wf-map-buttons .arrows,
+.wf-map-buttons .floor-pager,
+.wf-map-buttons .wf-floors-arrows,
+#wf-floors .jspVerticalBar,
+#wf-floors .jspHorizontalBar,
+#wf-floors .jspArrow,
+#wf-floors .jspTrack,
+.wf-map-buttons .jspVerticalBar,
+.wf-map-buttons .jspHorizontalBar,
+.wf-map-buttons .jspArrow,
+.wf-map-buttons .jspTrack,
+.jspContainer .jspBar,
+.jspContainer .jspArrow,
+[class*="jspArrow"],
+[class*="jspBar"],
+[class*="floor-pager"],
+[class*="wf-floors-arrow"],
+.wf-map-buttons [class*="arrow"],
+#wf-floors [class*="arrow"] {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
 }

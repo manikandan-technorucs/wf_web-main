@@ -24,6 +24,8 @@ function parseOptions(env, prefix) {
 			keyName = keyName.replace('color.1.alt', 'color.1');
 			keyName = keyName.replace('color.1', 'color-1');
             keyName = keyName.replace('color-1.alt', 'color.1'); // just in case
+            keyName = keyName.replace('fit.floor.pois', 'fit-floor-pois');
+            keyName = keyName.replace('default.zoom', 'default-zoom');
 		}
 		return [keyName, v[1]]
 	})

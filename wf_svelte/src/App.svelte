@@ -292,6 +292,9 @@
             );
             pathTextTime =
                 wayfinder.settings.getInt("path.message.duration", 5) * 1000;
+            setTimeout(() => {
+                zoomOutMap();
+            }, 500);
         });
 
         wayfinder.events.on(
@@ -322,6 +325,10 @@
                     showPathText = false;
                 }, pathTextTime);
             }
+
+            setTimeout(() => {
+                zoomOutMap();
+            }, 400);
         });
 
         wayfinder.events.on("map-click", (poi) => {
@@ -361,9 +368,47 @@
             }, 500);
         });
 
-        wayfinder.events.on("map-ready", (poi) => {
-            setTimeout(() => {}, 500);
+        wayfinder.events.on("map-ready", () => {
+            setTimeout(() => {
+                zoomOutMap();
+            }, 500);
         });
+
+        function zoomOutMap() {
+            if (!wayfinder) return;
+            try {
+                if (typeof wayfinder.zoomOut === "function") {
+                    wayfinder.zoomOut();
+                    wayfinder.zoomOut();
+                }
+                if (wayfinder.map) {
+                    if (typeof wayfinder.map.zoomOut === "function") {
+                        wayfinder.map.zoomOut();
+                        wayfinder.map.zoomOut();
+                    }
+                    if (typeof wayfinder.map.setZoom === "function") {
+                        wayfinder.map.setZoom(0.05);
+                    }
+                }
+                if (typeof wayfinder.setZoom === "function") {
+                    wayfinder.setZoom(0.05);
+                }
+                if (wayfinder.view) {
+                    if (typeof wayfinder.view.zoomOut === "function") {
+                        wayfinder.view.zoomOut();
+                        wayfinder.view.zoomOut();
+                    }
+                    if (typeof wayfinder.view.setZoom === "function") {
+                        wayfinder.view.setZoom(0.05);
+                    }
+                }
+                if (wayfinder.kiosk && typeof wayfinder.kiosk.setZoom === "function") {
+                    wayfinder.kiosk.setZoom(0.05);
+                }
+            } catch (e) {
+                console.error("Zoom out error:", e);
+            }
+        }
 
         wayfinder.events.on("location-success", function (location) {
             if (location) {
@@ -494,9 +539,20 @@
     }
 
     function makePOI(poi) {
+        if (!poi) return null;
+        let actualPoi = poi.poi ? poi.poi : (typeof poi === "string" || typeof poi === "number" ? wayfinder.pois[poi] : poi);
+        if (!actualPoi) return null;
+        let nameStr = "Unknown";
+        if (typeof actualPoi.getName === "function") {
+            nameStr = actualPoi.getName(language);
+        } else if (actualPoi.name) {
+            nameStr = actualPoi.name;
+        } else if (actualPoi.title) {
+            nameStr = actualPoi.title;
+        }
         return {
-            id: poi.id,
-            name: poi.getName(language),
+            id: actualPoi.id || poi.id || poi,
+            name: nameStr,
         };
     }
 
@@ -506,7 +562,8 @@
     }
 
     function openPOI(e) {
-        let poi = wayfinder.pois[e.detail];
+        let poiId = typeof e.detail === "object" ? e.detail.id : e.detail;
+        let poi = wayfinder.pois[poiId] || (typeof wayfinder.getPOI === "function" ? wayfinder.getPOI(poiId) : null) || (typeof e.detail === "object" ? e.detail : null);
         if (poi) {
             wayfinder.display(poi);
             showPopup(poi);
@@ -583,13 +640,15 @@
     }
 
     function searchPOI() {
-        if (search && search.keyword && search.keyword.length >= 2) {
-            let results = wayfinder.search.search(search.keyword);
-
-            results = results.slice(0, 15);
-            search.results = results.map((p) => makePOI(p));
+        if (search && search.keyword && search.keyword.trim().length >= 2) {
+            let results = wayfinder.search.search(search.keyword.trim());
+            results = results ? results.slice(0, 15) : [];
+            search.results = results.map((p) => makePOI(p)).filter(Boolean);
             searchVisible = true;
             groupsVisible = true;
+        } else {
+            searchVisible = false;
+            search.results = [];
         }
     }
 
@@ -691,136 +750,98 @@
     style="max-height: {maxHeight}vh;"
 >
     {#if menu}
-        <div
-            class="wf-menu sm:wt-w-full wt-mb-4 wt-basis-1/3 wt-grow-0 wt-flex wt-flex-col"
-        >
-            <div class="sm:wt-visible">
-                <label
-                    for="poi-search"
-                    id="wf-search-label"
-                    class="wt-hidden sm:wt-block"
-                    data-translation-element="web-search-label"
-                    >Otsi kaupluse või brändi järgi</label
-                >
-                <div class="poi-search-container">
+        <div class="wf-menu sm:wt-w-full wt-mb-4 wt-basis-1/3 wt-grow-0 wt-flex wt-flex-col">
+
+            <!-- Sidebar Header -->
+            <div class="wf-sidebar-header">
+                <div class="wf-sidebar-brand">
+                    <span class="wf-sidebar-brand-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
+                        </svg>
+                    </span>
+                    <span class="wf-sidebar-brand-name" data-translation-element="web-app-name">Mall Map</span>
+                </div>
+            </div>
+
+            <!-- Search Bar (deFransz dark style) -->
+            <div class="poi-search-wrapper">
+                <div class="poi-search-inner">
+                    <span class="poi-search-icon-left">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
                     <input
-                        class="wt-w-full"
                         id="poi-search"
                         bind:value={search.keyword}
                         on:change={searchPOI}
                         on:input={searchPOI}
-                        placeholder=""
+                        placeholder="Search..."
                         data-translation-attributes="placeholder"
                         data-translation-attribute-placeholder="web-search-placeholder"
                     />
-                    {#if !searchVisible}
-                        <svg
-                            id="wf-search-icon"
-                            width="100"
-                            height="100"
-                            viewbox="0 0 24 24"
-                        >
-                            <path
-                                d="M11.1667 17.8333C14.8486 17.8333 17.8333 14.8486 17.8333 11.1667C17.8333 7.48477 14.8486 4.5 11.1667 4.5C7.48477 4.5 4.5 7.48477 4.5 11.1667C4.5 14.8486 7.48477 17.8333 11.1667 17.8333Z"
-                                fill="none"
-                                stroke="#6A747B"
-                                stroke-width="1.5"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
-                            <path
-                                d="M19.5 19.5L15.875 15.875"
-                                stroke="#6A747B"
-                                stroke-width="1.5"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
-                        </svg>
-                    {/if}
                     {#if searchVisible}
-                        <svg
-                            class="wf-icon search-clear"
-                            viewBox="0 0 16 19"
-                            on:click={clearSearch}
-                        >
-                            <path
-                                d="m 0,14.5449 h 20.569799 v 2.05698 H 0 Z"
-                                transform="rotate(-45 0 14.5449)"
-                            />
-                            <path
-                                transform="rotate(-135 14.5454 16)"
-                                d="m 14.5454,16 h 20.569799 v 2.05698 H 14.5454 Z"
-                            />
-                        </svg>
+                        <span class="poi-search-clear" on:click={clearSearch} role="button" tabindex="0">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
                     {/if}
-                </div>
-                <div class="wf-groups-button">
-                    <button class="wp-element-button" on:click={showMenu}>
-                        <span data-translation-element="web-categories"
-                            >Categories</span
-                        >
-                        <svg
-                            class="wf-icon"
-                            viewBox="0 0 14 8"
-                            on:click={hideMenu}
-                        >
-                            <path
-                                d="M1 1L7 7L13 1"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.5"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
-                        </svg>
-                    </button>
                 </div>
             </div>
+
+            <!-- Mobile categories toggle -->
+            <div class="wf-groups-button">
+                <button class="wp-element-button" on:click={showMenu}>
+                    <span data-translation-element="web-categories">Categories</span>
+                    <svg class="wf-icon" viewBox="0 0 14 8" on:click={hideMenu} role="img">
+                        <path d="M1 1L7 7L13 1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Menu content -->
             <div
                 id="wf-menu-content"
-                class="wf-groups wt-overflow-hidden md:wt-overflow-y-auto wt-grow {groupsVisible
-                    ? 'wf-active'
-                    : ''}"
+                class="wf-groups wt-overflow-hidden md:wt-overflow-y-auto wt-grow {groupsVisible ? 'wf-active' : ''}"
             >
-                <div id="wf-search-items-container">
-                    <div class="wf-menu-header hidden" on:click={clearSearch}>
-                        <span data-translation-element="web-search-header"
-                            >Otsi kauplust</span
-                        >
-                        <svg class="wf-icon" viewBox="0 0 16 19">
-                            <use xlink:href="#icon-clear" />
-                        </svg>
-                    </div>
-                    <ul id="wf-search-items" class="wf-accordion"></ul>
-                </div>
+                <!-- Section label -->
+                {#if !searchVisible}
+                    <div class="wf-section-label sm:wt-block wt-hidden">Main Menu</div>
+                {/if}
+
+                <!-- Category accordion & Search results -->
                 <div id="wf-menu-items-container">
+                    <!-- Mobile header -->
                     <div
                         class="wf-menu-header wf-mobile-menu-header wt-flex wt-items-center wt-justify-between sm:wt-hidden"
-                        on:click={hideMenu}
+                        on:click={searchVisible ? clearSearch : hideMenu}
+                        role="button" tabindex="0"
                     >
-                        <span data-translation-element="web-category-header"
-                            >Sorteeri kategooria järgi</span
-                        >
-                        <svg class="wf-icon" viewBox="0 0 16 19">
-                            <use xlink:href="#icon-clear" />
-                        </svg>
+                        {#if searchVisible}
+                            <span data-translation-element="web-search-header">Search results</span>
+                        {:else}
+                            <span data-translation-element="web-category-header">Categories</span>
+                        {/if}
+                        <svg class="wf-icon" viewBox="0 0 16 19"><use xlink:href="#icon-clear"/></svg>
                     </div>
+
                     {#if !searchVisible}
                         <Menu {groups} on:poiclicked={openPOI}></Menu>
-                    {/if}
-                    {#if searchVisible}
-                        <SearchResults
-                            results={search.results}
-                            on:poiclicked={openPOI}
-                        ></SearchResults>
+                    {:else}
+                        <div class="wf-menu-header wt-hidden sm:wt-flex wt-items-center wt-justify-between" on:click={clearSearch} role="button" tabindex="0" style="padding: 14px 16px; font-weight: 700; color: #1E1E24; cursor: pointer; border-bottom: 1px solid rgba(0,0,0,0.06);">
+                            <span data-translation-element="web-search-header">Search results ({search.results.length})</span>
+                            <svg class="wf-icon" viewBox="0 0 16 19" style="height: 14px; width: 14px;"><use xlink:href="#icon-clear"/></svg>
+                        </div>
+                        <SearchResults results={search.results} on:poiclicked={openPOI}></SearchResults>
                     {/if}
                 </div>
             </div>
-            <!-- POI info -->
+
             {#if !enablePopup}
-                <div class="wt-absolute wt-top-0 wt-left-0 wt-w-full wt-h-full">
-                    POI
-                </div>
+                <div class="wt-absolute wt-top-0 wt-left-0 wt-w-full wt-h-full">POI</div>
             {/if}
         </div>
     {/if}
@@ -835,13 +856,13 @@
                     ? 'wt-left-0 md:wt-left-4'
                     : 'wt-right-0 md:wt-right-4'}"
             >
-                <div id="wf-floors" class="wt-overflow-y-auto">
+                <div id="wf-floors">
                     {#each floors as [id, floor]}
                         <button
                             class="wp-element-button {id == activeFloor
                                 ? 'wf-active'
                                 : ''}"
-                            on:click={showFloor(id)}>{floor}</button
+                            on:click={() => showFloor(id)}>{floor}</button
                         >
                     {/each}
                 </div>
@@ -1018,7 +1039,6 @@
 
     .wf-menu {
         padding: 0;
-        padding-right: 0.5rem;
         margin-bottom: 0;
         overflow: hidden;
     }
@@ -1027,43 +1047,29 @@
         display: none;
     }
 
+    /* Search styles are now in app.css (.poi-search-wrapper, .poi-search-inner, etc.) */
+
+    /* Legacy: hide old search label */
+    #wf-search-label {
+        display: none;
+    }
+
+    /* Old poi-search-container kept for fallback */
     .poi-search-container {
-        padding-bottom: 12px;
+        padding-bottom: 0;
         position: relative;
     }
 
-    #wf-search-label {
-        font-size: 16px;
-        margin-top: 12px;
-    }
-
     .poi-search-container input {
-        width: 100%;
-        padding-left: 12px;
-        padding-right: 32px;
-        line-height: 1.8;
-        padding-top: 7px;
-        padding-bottom: 7px;
-        border: 1px solid #a7a9ac;
-        box-sizing: border-box;
-    }
-
-    .poi-search-container input:focus {
-        outline: none;
+        display: none; /* handled by .poi-search-inner input in app.css */
     }
 
     svg.search-clear {
-        position: absolute;
-        top: 12px;
-        right: 12px;
+        display: none;
     }
 
     .poi-search-container #wf-search-icon {
-        position: absolute;
-        right: 0.8rem;
-        color: #3C3C46;
-        height: 24px;
-        width: auto;
+        display: none;
     }
 
     #wf-menu-items-container,
@@ -1102,18 +1108,43 @@
     }
 
     #poi-popup .poi-popup-content {
-        background-color: #fff;
-        padding: 11px;
-        box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.3);
+        background: rgba(208, 213, 220, 0.88);
+        backdrop-filter: blur(24px) saturate(180%);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        border-radius: 16px;
+        padding: 16px;
+        color: #1E1E24;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(188, 164, 116, 0.3);
+    }
+
+    #poi-popup .title {
+        color: #1E1E24;
+        font-weight: 700;
+        font-size: 15px;
     }
 
     #poi-popup button {
-        border: 1px solid #e0e0df;
-        font-size: 14px;
-        padding: 8px;
+        border: 1px solid rgba(188, 164, 116, 0.5);
+        background: linear-gradient(135deg, #BCA474 0%, #9B8252 100%);
+        color: #1E1E24;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 700;
+        padding: 10px;
         width: 100%;
-        margin-top: 11px;
+        margin-top: 12px;
+        box-shadow: 0 4px 12px rgba(188, 164, 116, 0.35);
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
+
+    #poi-popup button:hover {
+        background: #FFFFFF;
+        color: #1E1E24;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(255, 255, 255, 0.6);
+    }
+
     #poi-popup .wf-icon {
         margin-top: -2px;
         width: 18px;
@@ -1142,7 +1173,7 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow-x: hidden;
-        color: #3C3C46;
+        color: #1E1E24;
     }
 
     @keyframes bounce-left {
@@ -1164,14 +1195,17 @@
     }
 
     .pin-down {
-        background-color: white !important;
+        background: rgba(208, 213, 220, 0.88) !important;
+        backdrop-filter: blur(24px);
+        border-right: 1px solid rgba(255, 255, 255, 0.9);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.9);
         transform: rotate(45deg);
         width: 10px;
         height: 10px;
         left: 50%;
         margin-left: -5px;
         position: relative;
-        bottom: 5px;
+        bottom: 6px;
         margin-top: -1px;
         z-index: 0;
     }
@@ -1226,28 +1260,43 @@
     }
 
     .wf-map-buttons button {
-        font-size: 18px;
-        margin-bottom: 4px;
-        display: block;
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        display: flex;
         text-align: center;
         cursor: pointer;
-        color: #343847;
-        border: 1px solid #e0e0df;
-        background-color: #fff;
+        color: #1E1E24;
+        border: 1px solid rgba(255, 255, 255, 0.85);
+        background: rgba(208, 213, 220, 0.82);
+        backdrop-filter: blur(18px) saturate(180%);
+        -webkit-backdrop-filter: blur(18px) saturate(180%);
         flex-direction: column;
         justify-content: center;
         align-items: center;
         overflow: hidden;
         text-overflow: ellipsis;
-        width: 3rem;
-        height: 3rem;
-        display: flex;
+        width: 3.4rem;
+        height: 3.4rem;
+        border-radius: 14px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .wf-map-buttons button:hover {
+        background: rgba(255, 255, 255, 0.95);
+        border-color: #BCA474;
+        color: #BCA474;
+        transform: translateY(-3px) scale(1.03);
+        box-shadow: 0 10px 24px rgba(188, 164, 116, 0.25), 0 4px 8px rgba(0, 0, 0, 0.06);
     }
 
     .wf-map-buttons button.wf-active {
-        background-color: var(--wf-active-color);
-        transition: background-color 0.5s ease;
-        color: var(--wf-active-content);
+        background: linear-gradient(135deg, #BCA474 0%, #9B8252 100%) !important;
+        border: 1px solid #BCA474 !important;
+        color: #1E1E24 !important;
+        box-shadow: 0 8px 24px rgba(188, 164, 116, 0.45), 0 0 14px rgba(188, 164, 116, 0.4) !important;
+        transform: scale(1.05);
     }
 
     .wf-icon-puhkealad {

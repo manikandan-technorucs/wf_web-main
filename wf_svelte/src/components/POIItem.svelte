@@ -2,7 +2,7 @@
     <!-- svelte-ignore a11y-label-has-associated-control -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-    <label class="wf-menu-label"  on:click={openPOI(poi.id)}>{ poi.name }</label>
+    <label class="wf-poi-label" on:click={() => openPOI(poi.id)}>{ poi.name }</label>
 </li>
 
 <script>
@@ -12,7 +12,18 @@
     export let poi;
     export let active = false;
 
-    function openPOI (id) {
+    function openPOI(id) {
         dispatch('clicked', id);
     }
 </script>
+
+<style>
+    .wf-poi-label {
+        display: block;
+        width: 100%;
+        cursor: pointer;
+        color: inherit;
+        font-size: 13px;
+        padding: 2px 0;
+    }
+</style>
