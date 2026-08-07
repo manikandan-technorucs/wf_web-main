@@ -75,11 +75,20 @@ body {
     position: relative;
     z-index: 20;
 
-    /* ---- reduced width (320px) for a sleeker, more compact sidebar ---- */
-    flex-basis: 320px !important;
-    max-width: 320px !important;
-    min-width: 280px;
-    width: 320px !important;
+    /* On desktop/tablet, set a fixed width. On mobile, let it be full width */
+    @media (min-width: 1024px) {
+        flex-basis: 320px !important;
+        max-width: 320px !important;
+        min-width: 280px;
+        width: 320px !important;
+    }
+    @media (max-width: 1023px) {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: visible;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
     flex-shrink: 0;
     flex-grow: 0;
 }

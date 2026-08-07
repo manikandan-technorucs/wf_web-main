@@ -746,11 +746,11 @@
 </svg>
 <div
     id="wf_container"
-    class="wf-appcontainer wt-w-full wt-flex wt-flex-col-reverse md:wt-flex-row wf-items-stretch {customClasses}"
+    class="wf-appcontainer wt-w-full wt-flex wt-flex-col-reverse lg:wt-flex-row wf-items-stretch {customClasses}"
     style="max-height: {maxHeight}vh;"
 >
     {#if menu}
-        <div class="wf-menu sm:wt-w-full wt-mb-4 wt-basis-1/3 wt-grow-0 wt-flex wt-flex-col">
+        <div class="wf-menu wt-w-full wt-h-[8.5rem] lg:wt-h-full wt-pl-2 lg:wt-pl-0 wt-mb-4 lg:wt-mb-0 wt-basis-1/3 wt-grow-0 wt-flex wt-flex-col">
 
             <!-- Sidebar Header -->
             <div class="wf-sidebar-header">
@@ -783,7 +783,7 @@
                         data-translation-attribute-placeholder="web-search-placeholder"
                     />
                     {#if searchVisible}
-                        <span class="poi-search-clear" on:click={clearSearch} role="button" tabindex="0">
+                        <span class="poi-search-clear" on:click={clearSearch} on:keydown={(e) => e.key === 'Enter' && clearSearch()} role="button" tabindex="0">
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
@@ -793,10 +793,10 @@
             </div>
 
             <!-- Mobile categories toggle -->
-            <div class="wf-groups-button">
-                <button class="wp-element-button" on:click={showMenu}>
+            <div class="wf-groups-button wt-block lg:wt-hidden">
+                <button class="wp-element-button" on:click={() => groupsVisible ? hideMenu() : showMenu()}>
                     <span data-translation-element="web-categories">Categories</span>
-                    <svg class="wf-icon" viewBox="0 0 14 8" on:click={hideMenu} role="img">
+                    <svg class="wf-icon" viewBox="0 0 14 8" role="presentation">
                         <path d="M1 1L7 7L13 1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </button>
@@ -805,7 +805,7 @@
             <!-- Menu content -->
             <div
                 id="wf-menu-content"
-                class="wf-groups wt-overflow-hidden md:wt-overflow-y-auto wt-grow {groupsVisible ? 'wf-active' : ''}"
+                class="wf-groups wt-overflow-hidden lg:wt-overflow-y-auto wt-grow {groupsVisible ? 'wf-active' : ''}"
             >
                 <!-- Section label -->
                 {#if !searchVisible}
@@ -817,8 +817,10 @@
                     <!-- Mobile header -->
                     <div
                         class="wf-menu-header wf-mobile-menu-header wt-flex wt-items-center wt-justify-between sm:wt-hidden"
+                        role="button"
+                        tabindex="0"
                         on:click={searchVisible ? clearSearch : hideMenu}
-                        role="button" tabindex="0"
+                        on:keydown={(e) => e.key === 'Enter' && (searchVisible ? clearSearch() : hideMenu())}
                     >
                         {#if searchVisible}
                             <span data-translation-element="web-search-header">Search results</span>
@@ -831,7 +833,7 @@
                     {#if !searchVisible}
                         <Menu {groups} on:poiclicked={openPOI}></Menu>
                     {:else}
-                        <div class="wf-menu-header wt-hidden sm:wt-flex wt-items-center wt-justify-between" on:click={clearSearch} role="button" tabindex="0" style="padding: 14px 16px; font-weight: 700; color: #1E1E24; cursor: pointer; border-bottom: 1px solid rgba(0,0,0,0.06);">
+                        <div class="wf-menu-header wt-hidden sm:wt-flex wt-items-center wt-justify-between" on:click={clearSearch} on:keydown={(e) => e.key === 'Enter' && clearSearch()} role="button" tabindex="0" style="padding: 14px 16px; font-weight: 700; color: #1E1E24; cursor: pointer; border-bottom: 1px solid rgba(0,0,0,0.06);">
                             <span data-translation-element="web-search-header">Search results ({search.results.length})</span>
                             <svg class="wf-icon" viewBox="0 0 16 19" style="height: 14px; width: 14px;"><use xlink:href="#icon-clear"/></svg>
                         </div>
@@ -845,16 +847,16 @@
             {/if}
         </div>
     {/if}
-    <div class="wf-map-container wt-grow">
-        <div class="wf-map wt-w-full wt-relative sm:wt-flex">
-            <div class="map-wrapper wt-w-full wt-h-full">
+    <div class="wf-map-container wt-grow wt-flex wt-flex-col">
+        <div class="wf-map wt-w-auto lg:wt-w-full wt-relative wt-flex wt-flex-col lg:wt-flex-row wt-items-start wt-pb-4 lg:wt-pb-0">
+            <div class="map-wrapper wt-w-full wt-h-full wt-grow">
                 <canvas id="map" width="400" height="300"></canvas>
             </div>
             <div
-                class="wf-map-buttons wt-flex wt-flex-col wt-gap-12 {align ==
+                class="wf-map-buttons wt-absolute lg:wt-relative wt-flex wt-flex-col wt-gap-2 lg:wt-gap-12 wt-top-16 lg:wt-top-0 wt-bottom-16 lg:wt-bottom-0 {align ==
                 'left'
-                    ? 'wt-left-0 md:wt-left-4'
-                    : 'wt-right-0 md:wt-right-4'}"
+                    ? 'wt-left-2 lg:wt-left-4'
+                    : 'wt-right-2 lg:wt-right-4'}"
             >
                 <div id="wf-floors">
                     {#each floors as [id, floor]}
@@ -1049,10 +1051,6 @@
 
     /* Search styles are now in app.css (.poi-search-wrapper, .poi-search-inner, etc.) */
 
-    /* Legacy: hide old search label */
-    #wf-search-label {
-        display: none;
-    }
 
     /* Old poi-search-container kept for fallback */
     .poi-search-container {
@@ -1064,23 +1062,10 @@
         display: none; /* handled by .poi-search-inner input in app.css */
     }
 
-    svg.search-clear {
-        display: none;
-    }
-
-    .poi-search-container #wf-search-icon {
-        display: none;
-    }
-
-    #wf-menu-items-container,
-    #wf-search-items-container {
+    #wf-menu-items-container {
         display: none;
         flex-direction: column;
         justify-content: flex-start;
-    }
-
-    .wf-search #wf-search-items-container {
-        display: flex;
     }
 
     .wf-groups #wf-menu-items-container {
@@ -1101,12 +1086,6 @@
         animation-iteration-count: 2;
         cursor: pointer;
     }
-
-    #poi-popup.active {
-        animation-name: bounce-2;
-        animation-timing-function: ease;
-    }
-
     #poi-popup .poi-popup-content {
         background: rgba(208, 213, 220, 0.88);
         backdrop-filter: blur(24px) saturate(180%);
@@ -1213,12 +1192,6 @@
     .wf-groups-button {
         display: none;
     }
-
-    .wf-groups-button.active > button > i {
-        transform: rotate(90deg);
-        transition: transform 0.5s ease;
-    }
-
     .wf-groups-button > button {
         width: 100%;
         line-height: 1.75;
@@ -1316,30 +1289,10 @@
         flex-grow: 1;
     }
 
-    /* Smartphones (portrait and landscape) ----------- */
-    @media (max-width: 500px) {
+    /* Smartphones & Tablets (portrait and landscape) ----------- */
+    @media (max-width: 1023px) {
         .wf-entry-content {
             padding: 2em 1em !important;
-        }
-
-        .wf-appcontainer {
-            flex-wrap: nowrap;
-        }
-
-        .wf-appcontainer > div {
-            flex-direction: column-reverse;
-            flex-grow: 1;
-        }
-
-        /* Styles */
-        .wf-menu {
-            height: 8.5rem;
-            box-sizing: border-box;
-            padding-left: 0.5rem;
-        }
-
-        .wf-groups-button {
-            display: block;
         }
 
         #wf-menu-content {
@@ -1376,22 +1329,8 @@
             flex-shrink: 1;
         }
 
-        #wf-menu-items {
-            padding-bottom: 2em;
-        }
-
-        .wf-appcontainer .wf-map {
-            width: auto !important;
-            flex-grow: 1;
-            padding-bottom: 1em;
-            display: flex;
-            position: relative;
-            align-items: flex-start;
-        }
-
         .wf-map-buttons {
-            top: 4rem;
-            bottom: 4rem;
+            z-index: 10;
         }
 
         .wf-map-buttons button {

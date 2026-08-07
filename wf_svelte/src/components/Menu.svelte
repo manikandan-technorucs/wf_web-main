@@ -31,11 +31,6 @@
 <style>
 
 
-    .wf-group-items {
-        padding-left: 0;
-        color: #3C3C46;
-    }
-
     /* Track */
     #wf-menu-items::-webkit-scrollbar-track {
         background: #E0E0DF;
