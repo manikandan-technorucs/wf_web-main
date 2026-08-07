@@ -746,11 +746,11 @@
 </svg>
 <div
     id="wf_container"
-    class="wf-appcontainer wt-w-full wt-flex wt-flex-col-reverse lg:wt-flex-row wf-items-stretch {customClasses}"
+    class="wf-appcontainer wt-w-full wt-flex wt-flex-col lg:wt-flex-row wf-items-stretch {customClasses}"
     style="max-height: {maxHeight}vh;"
 >
     {#if menu}
-        <div class="wf-menu wt-w-full wt-h-[8.5rem] lg:wt-h-full wt-pl-2 lg:wt-pl-0 wt-mb-4 lg:wt-mb-0 wt-basis-1/3 wt-grow-0 wt-flex wt-flex-col">
+        <div class="wf-menu wt-w-full wt-h-auto lg:wt-h-full wt-pb-3 lg:wt-pb-0 wt-mb-4 lg:wt-mb-0 wt-basis-1/3 wt-grow-0 wt-flex wt-flex-col">
 
             <!-- Sidebar Header -->
             <div class="wf-sidebar-header">
@@ -793,11 +793,11 @@
             </div>
 
             <!-- Mobile categories toggle -->
-            <div class="wf-groups-button wt-block lg:wt-hidden">
-                <button class="wp-element-button" on:click={() => groupsVisible ? hideMenu() : showMenu()}>
+            <div class="wf-groups-button wt-block lg:wt-hidden wt-px-4 wt-pt-3">
+                <button class="wp-element-button mobile-categories-toggle" on:click={() => groupsVisible ? hideMenu() : showMenu()}>
                     <span data-translation-element="web-categories">Categories</span>
                     <svg class="wf-icon" viewBox="0 0 14 8" role="presentation">
-                        <path d="M1 1L7 7L13 1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M1 1L7 7L13 1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </button>
             </div>
@@ -853,10 +853,10 @@
                 <canvas id="map" width="400" height="300"></canvas>
             </div>
             <div
-                class="wf-map-buttons wt-absolute lg:wt-relative wt-flex wt-flex-col wt-gap-2 lg:wt-gap-12 wt-top-16 lg:wt-top-0 wt-bottom-16 lg:wt-bottom-0 {align ==
+                class="wf-map-buttons wt-absolute lg:wt-relative wt-flex wt-flex-col wt-gap-2 lg:wt-gap-12 wt-bottom-8 lg:wt-bottom-auto lg:wt-top-0 wt-right-2 {align ==
                 'left'
-                    ? 'wt-left-2 lg:wt-left-4'
-                    : 'wt-right-2 lg:wt-right-4'}"
+                    ? 'lg:wt-left-4 lg:wt-right-auto'
+                    : 'lg:wt-right-4 lg:wt-left-auto'}"
             >
                 <div id="wf-floors">
                     {#each floors as [id, floor]}
@@ -1189,25 +1189,33 @@
         z-index: 0;
     }
 
-    .wf-groups-button {
-        display: none;
-    }
     .wf-groups-button > button {
         width: 100%;
         line-height: 1.75;
-        padding: 7px 12px;
-        border: none;
-        border: 1px solid #a7a9ac;
-        color: #231f20;
-        color: var(--wf-active-content, #231f20);
+        padding: 10px 16px;
+        border: 1px solid rgba(188, 164, 116, 0.4);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 249, 250, 0.9) 100%);
+        border-radius: 12px;
+        color: #1E1E24;
+        font-weight: 700;
+        font-size: 14px;
         position: relative;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
+    
+    .wf-groups-button > button:active {
+        transform: scale(0.98);
+        background: #F2F3F5;
+    }
+    
     .wf-groups-button > button > .wf-icon {
-        position: absolute;
-        right: 18px;
-        top: 50%;
-        height: 12px;
-        margin-top: -6px;
+        height: 10px;
+        width: auto;
+        color: #BCA474;
     }
 
     .wf-groups-button > button:focus {
@@ -1304,16 +1312,30 @@
             right: 0;
             width: 100%;
             min-height: 29rem;
-            background-color: #fff;
+            background-color: #f8f9fa;
             padding-bottom: 2rem;
-            transition: top 0.3s ease-out;
+            transition: top 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
             opacity: 0;
             display: flex;
             flex-direction: column;
+            border-radius: 24px 24px 0 0;
+            box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Drag Handle Pill */
+        #wf-menu-content::before {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 5px;
+            background: #d1d5db;
+            border-radius: 10px;
+            margin: 14px auto 10px auto;
+            flex-shrink: 0;
         }
 
         #wf-menu-content.wf-active {
-            top: 49%;
+            top: 40%;
             opacity: 1;
         }
 
@@ -1334,15 +1356,17 @@
         }
 
         .wf-map-buttons button {
-            width: 50px;
-            height: 50px;
-            line-height: 50px;
-            font-size: 20px;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            font-size: 15px;
+            border-radius: 18px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
 
         .wf-map-buttons svg {
-            height: 32px !important;
-            width: auto;
+            height: 20px !important;
+            width: 20px !important;
         }
     }
 
