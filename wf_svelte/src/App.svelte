@@ -77,7 +77,8 @@
     }
 
     if (typeof WF_OPTIONS === "object") {
-        mobile = WF_OPTIONS.mobile == "true";
+        mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        WF_OPTIONS.navigate_button = mobile ? "true" : "false";
 
         if (hasOption(WF_OPTIONS.maptype)) {
             type = WF_OPTIONS.maptype;
@@ -105,9 +106,7 @@
             project = WF_OPTIONS.project;
         }
 
-        if (hasOption(WF_OPTIONS.menu)) {
-            menu = WF_OPTIONS.menu == "true";
-        }
+        menu = !mobile;
 
         if (hasOption(WF_OPTIONS.group)) {
             parentGroup = WF_OPTIONS.group;
@@ -126,18 +125,14 @@
             align = WF_OPTIONS.align;
         }
 
-        if (hasOption(WF_OPTIONS.path_button)) {
-            showPathButton = WF_OPTIONS.path_button == "true";
-        }
+        showPathButton = mobile;
 
         if (hasOption(WF_OPTIONS.accessibility_path_button)) {
             showAccessibilityPathButton =
                 WF_OPTIONS.accessibility_path_button == "true";
         }
 
-        if (hasOption(WF_OPTIONS.show_yah)) {
-            showYah = WF_OPTIONS.show_yah == "true";
-        }
+        showYah = mobile;
 
         if (hasOption(WF_OPTIONS.popup)) {
             enablePopup = WF_OPTIONS.popup == "true";
@@ -152,9 +147,7 @@
             }
         }
 
-        if (hasOption(WF_OPTIONS.compass_button)) {
-            enableCompass = WF_OPTIONS.compass_button == "true";
-        }
+        enableCompass = mobile;
 
         if (align == "right") {
             customClasses += "md:wt-flex-row-reverse";
